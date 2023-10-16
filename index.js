@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const server = require('./api/server.js')
 const config = require('./config.json');
 
-const client = new Client({ intents: [ GatewayIntentBits.Guilds ] });
+const client = new Client({ intents: [ GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers ] });
 
 const fs = require('node:fs');
 const path = require('node:path');
