@@ -1,7 +1,8 @@
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
+const server = require('./api/server.js')
 const config = require('./config.json');
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [ GatewayIntentBits.Guilds ] });
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -35,9 +36,10 @@ for (let file of commandFolder) {
     if ('data' in cmd && 'execute' in cmd) {
         client.commands.set(cmd.data.name, cmd);
     } else {
-        console.warn(`The ${cmd.data.name} command is incomplete!`);
+        console.warn(`The command at ${commandPath} is incomplete!`);
     }
 }
 
+server.start(client);
 
 client.login(config.token);
