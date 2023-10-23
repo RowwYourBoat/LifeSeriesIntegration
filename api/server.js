@@ -13,7 +13,7 @@ app.post('/api/:guildId', async (req, res) => {
 
     const authKey = req.header('authorization');
     const guildId = req.params.guildId;
-    console.log(` \nIncoming request!\nGuild ID: ${guildId}\n `)
+    console.log(` \n### NEW REQUEST ###\nGuild ID: ${guildId}`)
 
     // Verify whether guild exists within database
     if (!await db.has(`${guildId}`)) {
@@ -54,6 +54,11 @@ async function updateRole(res, guildId, uuid, newColour) {
     const guild = await client.guilds.fetch(guildId);
     const members = await db.get(`${guildId}.members`);
     const roles = await db.get(`${guildId}.roles`);
+    console.log(`Guild Name: ${guild.name}`)
+    console.log(`Player UUID: ${uuid}`)
+    console.log(`New Role Colour: ${newColour}`)
+    console.log(`Timestamp: ${new Date()}`)
+    console.log(`### END OF REQUEST ###\n `)
 
     // Verify whether matching member exists within database
     const memberData = members.filter(member => member.uuid === uuid);
@@ -96,8 +101,12 @@ async function updateRole(res, guildId, uuid, newColour) {
         await res.status(201).send(`Successfully updated discord user ${memberToUpdate.displayName}'s role!`);
 
     } catch (err) {
-        console.log(err);
-        await res.status(500).send(`INTERNAL SERVER ERROR — An unexpected error occured while attempting to update ${memberToUpdate.displayName}'s role!`);
+        if (err.rawError.code === 50013) {
+            await res.status(500).send(`INTERNAL SERVER ERROR — Unable to update ${memberToUpdate.displayName}'s role due to insufficient permissions.
+                Please move the bot's role (named Life Series Integration) to where it's ABOVE the coloured roles.`);
+        } else {
+            await res.status(500).send(`INTERNAL SERVER ERROR — An unexpected error occured while attempting to update ${memberToUpdate.displayName}'s role!`);
+        }
     }
 
 }
