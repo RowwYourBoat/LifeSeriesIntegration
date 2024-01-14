@@ -56,6 +56,13 @@ module.exports = {
 
             await interaction.followUp({ content: `:white_check_mark: Successfully linked Discord profile to the Minecraft account **${username}**!` });
 
+            const shouldUpdateNickname = await db.get(`${guildId}.config.set_nickname`);
+            const updateNicknameRole = await db.get(`${guildId}.roles.change_nickname`);
+            if (shouldUpdateNickname) {
+                await memberToLink.roles.remove(updateNicknameRole).catch(err => console.log(err));
+                await memberToLink.setNickname(username, "Minecraft Username").catch(err => console.log(err));
+            }
+
         }).catch(err => {
 
             console.log(err);
