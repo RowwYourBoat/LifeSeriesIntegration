@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
 const { QuickDB } = require("quick.db");
 const db = new QuickDB();
 
@@ -23,7 +23,6 @@ module.exports = {
     async execute(interaction) {
 
         const guild = interaction.guild;
-        const roleManager = guild.roles;
         await interaction.deferReply({ ephemeral: true });
         if (interaction.options._subcommand === 'set_nickname') {
 
@@ -36,18 +35,6 @@ module.exports = {
             }
 
             await db.set(`${guild.id}.config.set_nickname`, newValue).then(async () => {
-                const everyoneRole = await roleManager.fetch(await db.get(`${guild.id}.roles.everyone`));
-
-                // VVVV Administrator permissions are required for these actions VVVV
-                if (newValue) {
-                    const oldPermissions = everyoneRole.permissions
-                    const newPermissions = oldPermissions.remove(PermissionsBitField.Flags.ChangeNickname)
-                    everyoneRole.edit({ permissions: newPermissions }).catch(err => console.log(err))
-                } else {
-                    const oldPermissions = everyoneRole.permissions
-                    const newPermissions = oldPermissions.add(PermissionsBitField.Flags.ChangeNickname)
-                    everyoneRole.edit({ permissions: newPermissions }).catch(err => console.log(err))
-                }
 
                 await interaction.followUp({ content: `:white_check_mark: You've successfully set the configuration value of \`set_nickname\` to \`${newValue}\`!` }).catch(err => console.log(err));
 

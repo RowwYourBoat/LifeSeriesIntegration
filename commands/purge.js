@@ -27,16 +27,16 @@ module.exports = {
         for (let roleIdsKey in roleIds) await interaction.guild.roles.delete(roleIds[roleIdsKey]).catch(err => console.warn(err));
 
         // Clear data
-        await interaction.followUp({ content: ':warning: Clearing data..', ephemeral: true });
+        await interaction.editReply({ content: ':warning: Clearing data..', ephemeral: true });
         await db.delete(guildId);
-        await interaction.followUp({ content: ':warning: All data has been cleared. There\'s no turning back now!', ephemeral: true });
+        await interaction.editReply({ content: ':warning: All data has been cleared. There\'s no turning back now!', ephemeral: true });
 
         // Execute setup if requested
         const reform = interaction.options.getBoolean('reform');
         if (reform) {
-            await interaction.followUp({ content: ':warning: Setting up your server..', ephemeral: true });
+            await interaction.editReply({ content: ':warning: Setting up your server..', ephemeral: true });
             await guildCreate.execute(interaction.guild);
-            await interaction.followUp({ content: ':white_check_mark: The bot is ready to be used again!', ephemeral: true });
+            await interaction.editReply({ content: ':white_check_mark: The bot is ready to be used again!', ephemeral: true });
         }
     }
 }

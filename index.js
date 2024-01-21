@@ -1,8 +1,8 @@
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, Partials} = require('discord.js');
 const server = require('./api/server.js')
 const config = require('./config.json');
 
-const client = new Client({ intents: [ GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers ] });
+const client = new Client({ intents: [ GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers ], partials: [ Partials.GuildMember ] });
 
 const fs = require('node:fs');
 const path = require('node:path');

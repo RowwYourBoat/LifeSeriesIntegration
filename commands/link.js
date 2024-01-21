@@ -22,6 +22,7 @@ module.exports = {
         await this.link(interaction, interaction.member, username);
 
     },
+
     async link(interaction, memberToLink, username) {
 
         await axios.get(`https://api.mojang.com/users/profiles/minecraft/${username}`).then(async res => {
@@ -36,10 +37,10 @@ module.exports = {
             let terminate = false;
             members.forEach(member => {
                 if (member.id === memberId) {
-                    interaction.followUp({ content: ':x: Discord profile is already linked to a username.' });
+                    interaction.followUp({ content: ':x: Discord profile is already linked to a username.', ephemeral: true });
                     terminate = true;
                 } else if (member.uuid === minecraftPlayerUUID) {
-                    interaction.followUp({ content: ':x: Username is already linked to a discord profile.' });
+                    interaction.followUp({ content: ':x: Username is already linked to a discord profile.', ephemeral: true });
                     terminate = true;
                 }
             });
@@ -52,16 +53,18 @@ module.exports = {
                 "colour": 'green'
             });
 
+            // Add coloured role to member and update nickname
             await memberToLink.roles.add(await db.get(`${guildId}.roles.green`));
 
-            await interaction.followUp({ content: `:white_check_mark: Successfully linked Discord profile to the Minecraft account **${username}**!` });
-
             const shouldUpdateNickname = await db.get(`${guildId}.config.set_nickname`);
-            const updateNicknameRole = await db.get(`${guildId}.roles.change_nickname`);
             if (shouldUpdateNickname) {
-                await memberToLink.roles.remove(updateNicknameRole).catch(err => console.log(err));
-                await memberToLink.setNickname(username, "Minecraft Username").catch(err => console.log(err));
+                await memberToLink.setNickname(username, "Linked").catch(err => {
+                    console.log(err)
+                    interaction.followUp( { content: `:x: Your nickname was unable to be changed due to your role(s) being positioned higher than the bot's!`, ephemeral: true })
+                });
             }
+
+            await interaction.followUp({ content: `:white_check_mark: Successfully linked Discord profile to the Minecraft account **${username}**!`, ephemeral: true });
 
         }).catch(err => {
 

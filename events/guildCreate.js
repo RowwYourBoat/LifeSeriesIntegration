@@ -1,4 +1,4 @@
-const { Events, PermissionsBitField } = require('discord.js');
+const { Events } = require('discord.js');
 const { QuickDB } = require("quick.db");
 const db = new QuickDB();
 
@@ -20,9 +20,6 @@ module.exports = {
         const red_role = await roleManager.create({ name: 'Red', color: '#F10000', hoist: true, mentionable: false, permissions: [], reason: 'Life Series Integration Setup' }).catch(err => console.log(err));
         const gray_role = await roleManager.create({ name: 'Gray', color: '#8C8C8C', hoist: true, mentionable: false, permissions: [], reason: 'Life Series Integration Setup' }).catch(err => console.log(err));
 
-        const change_nickname_role = await roleManager.create({ name: 'Change Nickname', hoist: false, mentionable: false, permissions: PermissionsBitField.Flags.ChangeNickname, reason: 'Life Series Integration Setup' }).catch(err => console.log(err));
-        const everyone_role = roleManager.everyone;
-
         console.log(`Adding guild ${guild.id} to the database!`);
         await db.set(guild.id,
 
@@ -37,8 +34,6 @@ module.exports = {
                     "yellow": yellow_role.id,
                     "red": red_role.id,
                     "gray": gray_role.id,
-                    "change_nickname": change_nickname_role.id,
-                    "everyone": everyone_role.id
                 },
                 "config": {
                     "set_nickname": false

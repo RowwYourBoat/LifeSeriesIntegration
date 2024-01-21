@@ -19,13 +19,13 @@ module.exports = {
         // Verify whether member is actually linked
         const filter = members.filter(member => member.id === user.id);
         if (Object.entries(filter).length === 0) {
-            await interaction.followUp({ content: ':x: You\'re not linked to a Minecraft account.' });
+            await interaction.followUp({ content: ':x: You\'re not linked to a Minecraft account.', ephemeral: true });
             return;
         }
 
         // Remove member from database
         await db.set(`${guildId}.members`, members.filter(member => member.id !== user.id))
-            .then(async () => await interaction.followUp({content: `:white_check_mark: You've successfully unlinked your Discord profile!`}))
+            .then(async () => await interaction.followUp({content: `:white_check_mark: You've successfully unlinked your Discord profile!`, ephemeral: true}))
             .catch(() => interaction.followUp({content: `:x: An error occured.`}));
 
         // Remove assigned roles related to the bot from member
@@ -33,6 +33,14 @@ module.exports = {
             const roles = await db.get(`${guildId}.roles`);
             for (let rolesKey in roles) await guildMember.roles.remove(roles[rolesKey]);
         }).catch(err => console.warn(err));
+
+        // Update nickname if enabled
+        const shouldUpdateNickname = await db.get(`${guildId}.config.set_nickname`);
+        if (shouldUpdateNickname) {
+            await user.setNickname(null, "Unlinked").catch(() => {
+                interaction.followUp( { content: `:x: Your nickname was unable to be changed due to your role(s) being positioned higher than the bot's!`, ephemeral: true })
+            });
+        }
 
     }
 }
