@@ -12,6 +12,8 @@ const path = require('node:path');
 const eventsDir = path.join(__dirname, 'events');
 const eventsFolder = fs.readdirSync(eventsDir).filter(file => file.endsWith('js'));
 
+client.justUpdatedNickname = new Collection();
+
 for (let file of eventsFolder) {
     const eventPath = path.join(eventsDir, file);
     const event = require(eventPath);
@@ -42,4 +44,4 @@ for (let file of commandFolder) {
 
 server.start(client);
 
-client.login(config.dev_token);
+client.login(config.production_token);

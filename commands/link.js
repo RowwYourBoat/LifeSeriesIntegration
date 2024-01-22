@@ -65,6 +65,11 @@ module.exports = {
 
             const shouldUpdateNickname = await db.get(`${guildId}.config.set_nickname`);
             if (shouldUpdateNickname) {
+                const client = interaction.client
+                client.justUpdatedNickname.set(memberToLink.id, true);
+                setTimeout(() => {
+                    client.justUpdatedNickname.set(memberToLink.id, false)
+                }, 500)
                 await memberToLink.setNickname(username, "Linked").catch(err => {
                     interaction.followUp( { content: `:x: Your nickname was unable to be changed due to your role(s) being positioned higher than the bot's!`, ephemeral: true })
                 });
