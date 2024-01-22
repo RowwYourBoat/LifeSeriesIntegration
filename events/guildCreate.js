@@ -36,7 +36,8 @@ module.exports = {
                     "gray": gray_role.id,
                 },
                 "config": {
-                    "set_nickname": false
+                    "set_nickname": false,
+                    "required_role": null
                 }
             }
 

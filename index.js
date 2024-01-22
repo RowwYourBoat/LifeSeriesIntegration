@@ -42,4 +42,4 @@ for (let file of commandFolder) {
 
 server.start(client);
 
-client.login(config.token);
+client.login(config.dev_token);

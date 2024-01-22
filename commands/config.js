@@ -18,6 +18,17 @@ module.exports = {
                         .setDescription('The new value to set.')
                         .setRequired(true),
                 ),
+        )
+        .addSubcommand(builder =>
+            builder
+                .setName('required_role')
+                .setDescription('The role a member must have in order to link to their Minecraft Account.')
+                .addRoleOption(option =>
+                    option
+                        .setName('value')
+                        .setDescription('The new value to set.')
+                        .setRequired(true),
+                ),
         ),
 
     async execute(interaction) {
@@ -43,7 +54,26 @@ module.exports = {
                 console.log(err);
             });
 
-        }
+        } else if (interaction.options._subcommand === 'required_role') {
 
+            const newRole = interaction.options.getRole('value');
+            const newRoleId = newRole.id;
+            const currentRoleId = await db.get(`${guild.id}.config.required_role`);
+
+            if (newRoleId === currentRoleId) {
+                await interaction.followUp({content: `:x: That configuration option is already set to that value!`}).catch(err => console.log(err))
+                return;
+            }
+
+            await db.set(`${guild.id}.config.required_role`, newRoleId).then(async () => {
+
+                await interaction.followUp({ content: `:white_check_mark: You've successfully set the configuration value of \`required_role\` to <@${newRoleId}>!` }).catch(err => console.log(err));
+
+            }).catch(async err => {
+                await interaction.followUp({ content: `:x: Something went wrong! Please try again.` }).catch(err => console.log(err));
+                console.log(err);
+            });
+
+        }
     }
 }
