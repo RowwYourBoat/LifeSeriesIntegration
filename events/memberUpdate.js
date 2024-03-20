@@ -22,6 +22,6 @@ module.exports = {
         setTimeout(() => {
             client.justUpdatedNickname.set(newMember.id, false)
         }, 500)
-        await newMember.setNickname(oldNickname, "Not Allowed")
+        await newMember.setNickname(oldNickname, "Not Allowed").catch(err => console.log(err))
     }
 }
