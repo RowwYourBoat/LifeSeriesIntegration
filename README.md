@@ -1,6 +1,11 @@
-![Discord Integration](https://cdn.discordapp.com/attachments/1131903425123196968/1162355139248672860/discord-banner.png?ex=653ba294&is=65292d94&hm=e7b4f6680e7e12cf239c7acffbd3b14696faff12a43d7e7fe350d7220047ceda&)
+![discordlogo](https://github.com/user-attachments/assets/638bac06-469a-4f57-9f6c-825f1b1e1b89)
+
 <br>
+
+$${\color{red} NO \space LONGER \space OFFICIALLY \space HOSTED. \space Feel \space free \space to \space clone \space this \space repo \space in \space order \space to \space host \space the \space bot \space yourself!}$$
+
 <br>
+
 # Discord Integration Guide
 Can't get it to work? Feel free to ask for help in my [Discord Support Server](https://www.discord.gg/phJHjvrdE5)!
 
