@@ -148,7 +148,7 @@ async function isAuthorized(guildId, requestAuthKey) {
 module.exports = {
     start(cl) {
         client = cl;
-        app.listen(30336);
+        app.listen(80);
         console.log('Express started listening.')
     }
 }
