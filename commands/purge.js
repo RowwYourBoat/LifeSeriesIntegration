@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { QuickDB } = require('quick.db');
 const guildCreate = require('../events/guildCreate.js');
-const db = new QuickDB();
+const db = require("db");
 
 module.exports = {
     data: new SlashCommandBuilder()

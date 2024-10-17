@@ -1,5 +1,4 @@
-const { QuickDB } = require("quick.db");
-const db = new QuickDB();
+const db = require("db");
 
 const express = require('express');
 const {Collection} = require("discord.js");

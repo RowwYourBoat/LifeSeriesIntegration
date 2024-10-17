@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const axios = require('axios').default;
-const { QuickDB } = require("quick.db");
-const db = new QuickDB();
+const db = require("db");
 
 module.exports = {
     data: new SlashCommandBuilder()
