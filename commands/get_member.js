@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const db = require("db");
+import db from '../db';
 
 const axios = require('axios').default;
 

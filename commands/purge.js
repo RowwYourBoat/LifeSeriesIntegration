@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const guildCreate = require('../events/guildCreate.js');
-const db = require("db");
+import db from '../db';
 
 module.exports = {
     data: new SlashCommandBuilder()

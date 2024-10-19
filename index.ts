@@ -1,18 +1,26 @@
-const { Client, GatewayIntentBits, Collection, Partials} = require('discord.js');
-const server = require('./api/server.js')
-const config = require('./config.json');
+import { Client, GatewayIntentBits, Collection, Partials } from 'discord.js';
+import server from './api/listener';
+import config from './config.json';
+
+import fs from "node:fs";
+import path from "node:path";
 
 const client = new Client({ intents: [ GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers ], partials: [ Partials.GuildMember ] });
 
-const fs = require('node:fs');
-const path = require('node:path');
+class Index {
+
+    public commands: Collection<string, any>;
+
+    constructor() {
+        this.commands = new Collection();
+    }
+
+}
 
 // --------------------------- Event Initialization -------------------------- \\
 
 const eventsDir = path.join(__dirname, 'events');
 const eventsFolder = fs.readdirSync(eventsDir).filter(file => file.endsWith('js'));
-
-client.justUpdatedNickname = new Collection();
 
 for (let file of eventsFolder) {
     const eventPath = path.join(eventsDir, file);
@@ -30,13 +38,11 @@ for (let file of eventsFolder) {
 const commandsDir = path.join(__dirname, 'commands');
 const commandFolder = fs.readdirSync(commandsDir).filter(file => file.endsWith('js'));
 
-client.commands = new Collection();
-
 for (let file of commandFolder) {
     const commandPath = path.join(commandsDir, file);
     const cmd = require(commandPath);
     if ('data' in cmd && 'execute' in cmd) {
-        client.commands.set(cmd.data.name, cmd);
+        new Index().commands.set(cmd.data.name, cmd);
     } else {
         console.warn(`The command at ${commandPath} is incomplete!`);
     }
@@ -44,4 +50,4 @@ for (let file of commandFolder) {
 
 server.start(client);
 
-client.login(config.production_token);
+client.login(config.production_env.token);

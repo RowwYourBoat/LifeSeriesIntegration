@@ -1,5 +1,5 @@
 const { Events } = require("discord.js");
-const db = require("db");
+import db from '../db';
 
 module.exports = {
     once: false,
