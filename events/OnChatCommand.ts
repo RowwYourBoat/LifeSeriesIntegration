@@ -1,24 +1,37 @@
-const { Events, Collection} = require('discord.js');
+import {Events, GuildMember, Interaction} from "discord.js";
+import { Commands } from "../Util";
 
-const inDebounce = new Collection();
+const inDebounce: Map<string, number> = new Map();
 
-module.exports = {
+export default {
+
     once: false,
     name: Events.InteractionCreate,
-    async execute(interaction) {
+
+    async execute(interaction: Interaction): Promise<void> {
+
         if (!interaction.isChatInputCommand()) return;
 
-        const memberId = interaction.member.id;
+        const member = interaction.member;
+        if (!(member instanceof GuildMember)) return;
+
+        const memberId = member.id
         if (inDebounce.has(memberId)) {
-            if ((Date.now() - inDebounce.get(memberId)) < 5000) {
+
+            const currentDebounce: number | undefined = inDebounce.get(memberId);
+            if (!currentDebounce) return;
+
+            if ((Date.now() - currentDebounce) < 5000) {
                 interaction.reply({ content: ':warning: You\'re on a 5 second cooldown!', ephemeral: true });
                 return;
             } else
                 inDebounce.set(memberId, Date.now());
+
         } else
             inDebounce.set(memberId, Date.now());
 
-        const command = interaction.client.commands.get(interaction.commandName);
+
+        const command = Commands.list.get(interaction.commandName);
 
         if (!command) {
             console.error(`No command with the name ${command.name} was found!`)
@@ -30,5 +43,7 @@ module.exports = {
         } catch (error) {
             console.warn(error);
         }
+
     }
+
 }

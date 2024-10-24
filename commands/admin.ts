@@ -1,34 +1,36 @@
-const { SlashCommandBuilder } = require('discord.js');
-const {link} = require("./link");
-import db from '../db';
+import {ChatInputCommandInteraction, CommandInteraction, SlashCommandSubcommandBuilder} from "discord.js";
 
-module.exports = {
+const { SlashCommandBuilder, SlashCommandUserOption } = require('discord.js');
+const {link} = require("./link");
+import { MemberAccessor } from '../db';
+
+export default {
+
     data: new SlashCommandBuilder()
         .setName('admin')
         .setDescription('Manage other members.')
-        .setDMPermission(false)
         .setDefaultMemberPermissions(1099511627776) // Moderate Members permission required
-        .addSubcommand(builder =>
+        .addSubcommand((builder: SlashCommandSubcommandBuilder) =>
             builder
                 .setName('unlink')
                 .setDescription('Forcefully unlink members.')
-                .addUserOption(option =>
+                .addUserOption((option: typeof SlashCommandUserOption) =>
                     option
                         .setName('member')
                         .setDescription('The member to unlink.')
                         .setRequired(true),
                 ),
         )
-        .addSubcommand(builder =>
+        .addSubcommand((builder: SlashCommandSubcommandBuilder) =>
             builder
                 .setName('link')
                 .setDescription('Forcefully link members.')
-                .addUserOption(option =>
+                .addUserOption((option: typeof SlashCommandUserOption) =>
                     option
                         .setName('member')
                         .setDescription('The member to link.')
                         .setRequired(true),
-                ).addStringOption(option =>
+                ).addStringOption((option: typeof SlashCommandUserOption) =>
                     option
                         .setName('username')
                         .setDescription('Their Minecraft username.')
@@ -36,21 +38,25 @@ module.exports = {
                 )
         ),
 
-    async execute(interaction) {
+    async execute(interaction: ChatInputCommandInteraction) {
+
+        if (!interaction.guild) return;
 
         const guildId = interaction.guild.id;
         const user = interaction.options.getUser('member');
+
+        if (!user) return;
 
         const memberToUnlink = await interaction.guild.members.fetch(user.id);
         const members = await db.get(`${guildId}.members`);
 
         // Defer to indicate processing
         await interaction.deferReply({ ephemeral: true });
-        if (interaction.options._subcommand === 'unlink') {
+        if (interaction.options.getSubcommand() === 'unlink') {
 
             // Verify whether member is actually linked
-            const filter = members.filter(member => member.id === memberToUnlink.id);
-            if (Object.entries(filter).length === 0) {
+            const memberAccessor = new MemberAccessor({member_id: memberToUnlink.id, guild_id: memberToUnlink.guild.id})
+            if (await memberAccessor.exists()) {
                 await interaction.followUp({content: ':x: That member isn\'t linked to a Minecraft account.'});
                 return;
             }
